@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum SubmissionStatus {
+  NOT_STARTED
+  SUBMITTED
+  NEEDS_REVISION
+  CHECKED
+}
+
+enum PaymentStatus {
+  PAID
+  WAITING
+  OVERDUE
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  name                String
+  email               String               @unique
+  password            String
+  role                Role                 @default(STUDENT)
+  lessonCallLink      String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  lessonsAsStudent    Lesson[]             @relation("StudentLessons")
+  homeworkSubmissions HomeworkSubmission[]
+  boards              StudentBoard[]
+}
+
+model StudentBoard {
+  id        String   @id @default(cuid())
+  title     String
+  subject   String
+  url       String
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lesson {
+  id                  String               @id @default(cuid())
+  title               String
+  subject             String
+  teacher             String               @default("Дроздов Кирилл Борисович")
+  date                DateTime
+  videoLink           String?
+  boardLink           String?
+  homework            String?
+  homeworkFile        String?
+  isCompleted         Boolean              @default(false)
+  completedAt         DateTime?
+  classScore          Int?
+  homeworkScore       Int?
+  studentId           String
+  student             User                 @relation("StudentLessons", fields: [studentId], references: [id], onDelete: Cascade)
+  homeworkSubmissions HomeworkSubmission[]
+  payment             Payment?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model HomeworkSubmission {
+  id        String           @id @default(cuid())
+  lessonId  String
+  studentId String
+  file      String?
+  comment   String?
+  status    SubmissionStatus @default(SUBMITTED)
+  feedback  String?
+  lesson    Lesson           @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  student   User             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  lessonId  String        @unique
+  status    PaymentStatus @default(WAITING)
+  lesson    Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}

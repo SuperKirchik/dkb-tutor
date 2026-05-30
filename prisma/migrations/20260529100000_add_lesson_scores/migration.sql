@@ -1,0 +1,4 @@
+ALTER TABLE "Lesson" ADD COLUMN "isCompleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Lesson" ADD COLUMN "completedAt" TIMESTAMP(3);
+ALTER TABLE "Lesson" ADD COLUMN "classScore" INTEGER;
+ALTER TABLE "Lesson" ADD COLUMN "homeworkScore" INTEGER;
