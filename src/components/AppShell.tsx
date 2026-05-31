@@ -2,9 +2,9 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", adminOnly: false },
+  { href: "/dashboard", label: "Главная", adminOnly: false },
   { href: "/schedule", label: "Расписание", adminOnly: false },
-  { href: "/homework", label: "Домашние задания", adminOnly: false },
+  { href: "/homework", label: "Домашка", adminOnly: false },
   { href: "/profile", label: "Профиль", adminOnly: false },
   { href: "/admin", label: "Админ", adminOnly: true },
 ];
@@ -23,7 +23,7 @@ export async function AppShell({
     <div className="app-shell">
       <aside className="sidebar">
         <Link className="brand" href="/dashboard">
-          Репетитор Онлайн
+          Кабинет репетитора
         </Link>
         <nav className="app-nav" aria-label="Кабинет">
           {visibleItems.map((item) => (

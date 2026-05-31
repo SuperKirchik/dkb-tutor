@@ -6,7 +6,7 @@ export default function LoginPage() {
     <main className="auth-page">
       <div className="auth-shell">
         <Link className="brand" href="/">
-          Репетитор Онлайн
+          Кабинет репетитора
         </Link>
         <LoginForm />
       </div>
