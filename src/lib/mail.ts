@@ -22,6 +22,19 @@ function smtpConfigReady() {
   return Boolean(process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.SMTP_USER && process.env.SMTP_PASSWORD);
 }
 
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeout = setTimeout(() => reject(new Error("Email delivery timed out")), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
+
 export async function sendLessonResultEmail({
   to,
   lessonTitle,
@@ -42,13 +55,16 @@ export async function sendLessonResultEmail({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT),
     secure: process.env.SMTP_SECURE === "true",
+    connectionTimeout: 8000,
+    greetingTimeout: 8000,
+    socketTimeout: 8000,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASSWORD,
     },
   });
 
-  await transporter.sendMail({
+  await withTimeout(transporter.sendMail({
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to,
     subject: `Результаты урока: ${subject}`,
@@ -98,7 +114,7 @@ export async function sendLessonResultEmail({
         }
       </div>
     `,
-  });
+  }), 9000);
 
   return { sent: true };
 }
