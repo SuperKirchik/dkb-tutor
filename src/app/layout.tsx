@@ -17,8 +17,8 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
   },
   icons: {
-    apple: "/icon.svg",
-    icon: "/icon.svg",
+    apple: "/skhool-logo.png",
+    icon: "/skhool-logo.png",
   },
 };
 

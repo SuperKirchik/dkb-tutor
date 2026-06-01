@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const navItems = [
   { href: "/dashboard", label: "Главная", adminOnly: false },
@@ -22,9 +23,7 @@ export async function AppShell({
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <Link className="brand" href="/dashboard">
-          Кабинет репетитора
-        </Link>
+        <BrandLogo href="/dashboard" />
         <nav className="app-nav" aria-label="Кабинет">
           {visibleItems.map((item) => (
             <Link className={active === item.href ? "active" : ""} href={item.href} key={item.href}>

@@ -61,6 +61,24 @@ button {
   letter-spacing: 0;
 }
 
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo img {
+  width: 112px;
+  height: auto;
+  display: block;
+}
+
+.brand-logo span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 650;
+}
+
 .site-header {
   position: sticky;
   top: 0;

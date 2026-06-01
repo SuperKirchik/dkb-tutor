@@ -1,12 +1,11 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export default function Home() {
   return (
     <>
       <header className="site-header">
-        <Link className="brand" href="/">
-          Кабинет репетитора
-        </Link>
+        <BrandLogo href="/" />
         <nav className="public-nav" aria-label="Навигация">
           <Link className="nav-button" href="/login">
             Войти
