@@ -9,7 +9,6 @@ export function BrandLogo({ href }: BrandLogoProps) {
   return (
     <Link className="brand brand-logo" href={href}>
       <Image alt="SKhool by Drozdov K." height={68} priority src="/skhool-logo.png" width={180} />
-      <span>Кабинет</span>
     </Link>
   );
 }

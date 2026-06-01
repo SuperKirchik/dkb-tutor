@@ -73,12 +73,6 @@ button {
   display: block;
 }
 
-.brand-logo span {
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 650;
-}
-
 .site-header {
   position: sticky;
   top: 0;
