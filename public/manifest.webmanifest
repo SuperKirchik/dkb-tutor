@@ -9,8 +9,8 @@
   "theme_color": "#f5f7f4",
   "icons": [
     {
-      "src": "/skhool-logo-clean.png",
-      "sizes": "512x512",
+      "src": "/skhool-app-icon.png",
+      "sizes": "354x354",
       "type": "image/png",
       "purpose": "any"
     }
