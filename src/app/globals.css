@@ -578,6 +578,25 @@ textarea {
 
 .lesson-main {
   grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+}
+
+.lesson-main > .eyebrow {
+  order: 1;
+}
+
+.lesson-main > h2 {
+  order: 2;
+}
+
+.lesson-main > .link-row {
+  order: 3;
+  margin-top: 14px;
+}
+
+.lesson-main > .info-grid {
+  order: 4;
 }
 
 .info-grid {
@@ -781,6 +800,21 @@ textarea {
   .status-select {
     width: 100%;
     min-width: 0;
+  }
+
+  .lesson-main > .link-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #f8fafc;
+  }
+
+  .lesson-main > .link-row .button {
+    min-height: 48px;
   }
 
   .scroll-list {
