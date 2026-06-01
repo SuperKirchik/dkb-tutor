@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Кабинет репетитора",
+  title: "skhool",
   description: "Рабочий кабинет для расписания, домашних заданий, материалов, прогресса и оплат.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
