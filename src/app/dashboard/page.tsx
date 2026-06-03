@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { getCurrentUserFromCookie } from "@/lib/auth";
+import { formatLessonDate, formatLessonTime } from "@/lib/lessonDate";
 import { prisma } from "@/lib/prisma";
 
 const paymentLabels = {
@@ -53,8 +54,8 @@ export default async function DashboardPage() {
                 {nextLesson.subject}: {nextLesson.title}
               </h2>
               <div className="meta">
-                <span>{nextLesson.date.toLocaleDateString("ru-RU")}</span>
-                <span>{nextLesson.date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}</span>
+                <span>{formatLessonDate(nextLesson.date)}</span>
+                <span>{formatLessonTime(nextLesson.date)}</span>
                 <span>{nextLesson.teacher}</span>
               </div>
               <Link className="button primary" href={`/lesson/${nextLesson.id}`}>
@@ -93,7 +94,7 @@ export default async function DashboardPage() {
         <article className="panel">
           <p className="eyebrow">Уведомления</p>
           <ul className="notice-list">
-            <li>{nextLesson ? `Следующий урок: ${nextLesson.subject}, ${nextLesson.date.toLocaleDateString("ru-RU")}.` : "Новых уроков пока нет."}</li>
+            <li>{nextLesson ? `Следующий урок: ${nextLesson.subject}, ${formatLessonDate(nextLesson.date)}.` : "Новых уроков пока нет."}</li>
             <li>{latestSubmission ? `Последнее решение: ${latestSubmission.lesson.subject}.` : "Отправленных решений пока нет."}</li>
             <li>Все данные показываются только для текущего аккаунта.</li>
           </ul>

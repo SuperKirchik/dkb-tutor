@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { formatLessonDate, formatLessonTime } from "@/lib/lessonDate";
 
 type LessonResultEmail = {
   to: string;
@@ -72,7 +73,7 @@ export async function sendLessonResultEmail({
       "Здравствуйте!",
       "",
       `Урок: ${subject}: ${lessonTitle}`,
-      `Дата: ${date.toLocaleDateString("ru-RU")} ${date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}`,
+      `Дата: ${formatLessonDate(date)} ${formatLessonTime(date)}`,
       `Преподаватель: ${teacher}`,
       "",
       "Оценки:",
@@ -84,7 +85,7 @@ export async function sendLessonResultEmail({
       overdueLessons.length ? "Просроченные по оплате занятия:" : "Просроченных по оплате занятий нет.",
       ...overdueLessons.map(
         (lesson) =>
-          `${lesson.subject}: ${lesson.title}, ${lesson.date.toLocaleDateString("ru-RU")} ${lesson.date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })} — ${lesson.status}`,
+          `${lesson.subject}: ${lesson.title}, ${formatLessonDate(lesson.date)} ${formatLessonTime(lesson.date)} — ${lesson.status}`,
       ),
     ].join("\n"),
     html: `
@@ -92,7 +93,7 @@ export async function sendLessonResultEmail({
         <h2>Результаты урока</h2>
         <p>Здравствуйте!</p>
         <p><strong>${subject}: ${lessonTitle}</strong></p>
-        <p>Дата: ${date.toLocaleDateString("ru-RU")} ${date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}</p>
+        <p>Дата: ${formatLessonDate(date)} ${formatLessonTime(date)}</p>
         <p>Преподаватель: ${teacher}</p>
         <h3>Оценки</h3>
         <ul>
@@ -107,7 +108,7 @@ export async function sendLessonResultEmail({
             ? `<ul>${overdueLessons
                 .map(
                   (lesson) =>
-                    `<li>${lesson.subject}: ${lesson.title}, ${lesson.date.toLocaleDateString("ru-RU")} ${lesson.date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })} — ${lesson.status}</li>`,
+                    `<li>${lesson.subject}: ${lesson.title}, ${formatLessonDate(lesson.date)} ${formatLessonTime(lesson.date)} — ${lesson.status}</li>`,
                 )
                 .join("")}</ul>`
             : "<p>Просроченных по оплате занятий нет.</p>"

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { getCurrentUserFromCookie } from "@/lib/auth";
 import { fileNameFromPath, materialHref } from "@/lib/files";
+import { formatLessonDate } from "@/lib/lessonDate";
 import { prisma } from "@/lib/prisma";
 
 const submissionLabels: Record<string, string> = {
@@ -54,7 +55,7 @@ export default async function HomeworkPage() {
               <article className="homework-item" key={lesson.id}>
                 <div className="meta">
                   <span className="tag">{lesson.subject}</span>
-                  <span>{lesson.date.toLocaleDateString("ru-RU")}</span>
+                  <span>{formatLessonDate(lesson.date)}</span>
                   {user.role === "ADMIN" ? <span>{lesson.student.name}</span> : null}
                 </div>
                 <h2>{lesson.title}</h2>

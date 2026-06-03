@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { getCurrentUserFromCookie } from "@/lib/auth";
+import { formatLessonDate, formatLessonTime } from "@/lib/lessonDate";
 import { prisma } from "@/lib/prisma";
 
 const paymentLabels = {
@@ -43,8 +44,8 @@ export default async function SchedulePage() {
                 <span>{lesson.title}</span>
               </div>
               <div>
-                <strong>{lesson.date.toLocaleDateString("ru-RU")}</strong>
-                <span>{lesson.date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}</span>
+                <strong>{formatLessonDate(lesson.date)}</strong>
+                <span>{formatLessonTime(lesson.date)}</span>
               </div>
               <div>
                 <span className={`status ${statusClass(lesson.payment?.status)}`}>

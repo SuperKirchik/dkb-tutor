@@ -4,6 +4,7 @@ import { AppShell } from "@/components/AppShell";
 import { CompleteLessonForm } from "@/components/CompleteLessonForm";
 import { getCurrentUserFromCookie } from "@/lib/auth";
 import { fileNameFromPath, materialHref } from "@/lib/files";
+import { lessonDateTimeLabel } from "@/lib/lessonDate";
 import { prisma } from "@/lib/prisma";
 
 const paymentLabels = {
@@ -64,7 +65,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
         <article className="panel lesson-main">
           <p className="eyebrow">Информация</p>
           <h2>
-            {lesson.date.toLocaleDateString("ru-RU")}, {lesson.date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}
+            {lessonDateTimeLabel(lesson.date)}
           </h2>
           <div className="info-grid">
             <div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatLessonDate } from "@/lib/lessonDate";
 
 type CompletedLesson = {
   id: string;
@@ -104,7 +105,7 @@ export function StudentProgress({ lessons }: StudentProgressProps) {
                   <strong>
                     {lesson.subject}: {lesson.title}
                   </strong>
-                  <span>{(lesson.completedAt ?? lesson.date).toLocaleDateString("ru-RU")}</span>
+                  <span>{formatLessonDate(lesson.completedAt ?? lesson.date)}</span>
                 </div>
                 <div>
                   <strong>{scoreText(lesson.classScore)}</strong>

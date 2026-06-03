@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { ScheduleNextLessonForm } from "@/components/ScheduleNextLessonForm";
 import { getCurrentUserFromCookie } from "@/lib/auth";
+import { lessonDateInputValue, lessonDateTimeLabel, lessonTimeInputValue } from "@/lib/lessonDate";
 import { prisma } from "@/lib/prisma";
 
 export default async function ScheduleNextLessonPage({ params }: { params: Promise<{ id: string }> }) {
@@ -19,12 +20,9 @@ export default async function ScheduleNextLessonPage({ params }: { params: Promi
 
   const nextDate = new Date(lesson.date);
   nextDate.setDate(nextDate.getDate() + 7);
-  const nextDateLabel = `${nextDate.toLocaleDateString("ru-RU")}, ${nextDate.toLocaleTimeString("ru-RU", {
-    hour: "2-digit",
-    minute: "2-digit",
-  })}`;
-  const nextDateValue = nextDate.toISOString().slice(0, 10);
-  const nextTimeValue = nextDate.toISOString().slice(11, 16);
+  const nextDateLabel = lessonDateTimeLabel(nextDate);
+  const nextDateValue = lessonDateInputValue(nextDate);
+  const nextTimeValue = lessonTimeInputValue(nextDate);
 
   return (
     <AppShell active="/schedule">

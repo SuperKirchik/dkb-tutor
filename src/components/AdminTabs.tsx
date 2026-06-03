@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { formatLessonDate, formatLessonTime, lessonDateInputValue, lessonTimeInputValue } from "@/lib/lessonDate";
 
 type PaymentStatus = "PAID" | "WAITING" | "OVERDUE";
 
@@ -78,11 +79,11 @@ function statusClass(status: PaymentStatus | string) {
 }
 
 function lessonDateValue(date: string) {
-  return new Date(date).toISOString().slice(0, 10);
+  return lessonDateInputValue(date);
 }
 
 function lessonTimeValue(date: string) {
-  return new Date(date).toISOString().slice(11, 16);
+  return lessonTimeInputValue(date);
 }
 
 async function readJson<T>(url: string): Promise<T> {
@@ -587,8 +588,8 @@ export function AdminTabs() {
                     <span>{lesson.student.name}</span>
                   </div>
                   <div>
-                    <strong>{new Date(lesson.date).toLocaleDateString("ru-RU")}</strong>
-                    <span>{new Date(lesson.date).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}</span>
+                    <strong>{formatLessonDate(lesson.date)}</strong>
+                    <span>{formatLessonTime(lesson.date)}</span>
                   </div>
                   <div>
                     <span className={`status ${statusClass(lesson.payment?.status ?? "WAITING")}`}>
@@ -630,8 +631,8 @@ export function AdminTabs() {
                       {payment.lesson.subject}: {payment.lesson.title}
                     </strong>
                     <span>
-                      {new Date(payment.lesson.date).toLocaleDateString("ru-RU")}{" "}
-                      {new Date(payment.lesson.date).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}
+                      {formatLessonDate(payment.lesson.date)}{" "}
+                      {formatLessonTime(payment.lesson.date)}
                     </span>
                   </div>
                   <div>
