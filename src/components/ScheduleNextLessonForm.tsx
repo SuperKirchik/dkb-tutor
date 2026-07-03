@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { fileNameFromPath, materialHref } from "@/lib/files";
+import { appendMaterialFiles, fileNameFromPath, materialHref, materialList } from "@/lib/files";
 
 type ScheduleNextLessonFormProps = {
   lessonId: string;
@@ -48,9 +48,12 @@ export function ScheduleNextLessonForm({ lessonId, nextDateLabel, nextDateValue,
     let homeworkFile = lesson.homeworkFile ?? "";
 
     try {
-      const materialFile = form.get("materialFile");
-      if (materialFile instanceof File && materialFile.size > 0) {
-        homeworkFile = await uploadMaterial(materialFile);
+      const materialFiles = form
+        .getAll("materialFile")
+        .filter((file): file is File => file instanceof File && file.size > 0);
+      if (materialFiles.length > 0) {
+        const uploadedFiles = await Promise.all(materialFiles.map((file) => uploadMaterial(file)));
+        homeworkFile = appendMaterialFiles(homeworkFile, uploadedFiles);
       }
 
       const response = await fetch(`/api/lessons/${lessonId}/repeat`, {
@@ -132,12 +135,16 @@ export function ScheduleNextLessonForm({ lessonId, nextDateLabel, nextDateValue,
         </label>
         <label>
           Материалы
-          <input accept=".pdf,.docx,.png,.jpg,.jpeg" name="materialFile" type="file" />
+          <input accept=".pdf,.docx,.png,.jpg,.jpeg" multiple name="materialFile" type="file" />
         </label>
-        {lesson.homeworkFile ? (
-          <a className="file-chip" href={materialHref(lesson.homeworkFile)} rel="noreferrer" target="_blank">
-            {fileNameFromPath(lesson.homeworkFile)}
-          </a>
+        {materialList(lesson.homeworkFile).length ? (
+          <div className="file-list">
+            {materialList(lesson.homeworkFile).map((file) => (
+              <a className="file-chip" href={materialHref(file)} key={file} rel="noreferrer" target="_blank">
+                {fileNameFromPath(file)}
+              </a>
+            ))}
+          </div>
         ) : null}
         <button className="button primary" disabled={isSubmitting} type="submit">
           Назначить следующий урок

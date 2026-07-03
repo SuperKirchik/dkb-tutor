@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { appendMaterialFiles, fileNameFromPath, materialHref, materialList } from "@/lib/files";
 import { formatLessonDate, formatLessonTime, lessonDateInputValue, lessonTimeInputValue } from "@/lib/lessonDate";
 
 type PaymentStatus = "PAID" | "WAITING" | "OVERDUE";
@@ -124,10 +125,6 @@ async function uploadMaterial(file: File) {
   if (!response.ok) throw new Error("Не удалось загрузить материалы урока");
   const data = (await response.json()) as { file: { url: string } };
   return data.file.url;
-}
-
-function fileNameFromPath(path: string) {
-  return decodeURIComponent(path.split("/").pop() ?? path);
 }
 
 export function AdminTabs() {
@@ -327,9 +324,12 @@ export function AdminTabs() {
     };
 
     try {
-      const materialFile = form.get("materialFile");
-      if (materialFile instanceof File && materialFile.size > 0) {
-        payload.homeworkFile = await uploadMaterial(materialFile);
+      const materialFiles = form
+        .getAll("materialFile")
+        .filter((file): file is File => file instanceof File && file.size > 0);
+      if (materialFiles.length > 0) {
+        const uploadedFiles = await Promise.all(materialFiles.map((file) => uploadMaterial(file)));
+        payload.homeworkFile = appendMaterialFiles(payload.homeworkFile, uploadedFiles);
       }
 
       const response = await writeJson(editingLesson ? `/api/lessons/${editingLesson.id}` : "/api/lessons", editingLesson ? "PATCH" : "POST", payload);
@@ -551,9 +551,17 @@ export function AdminTabs() {
               </label>
               <label>
                 Материалы урока
-                <input accept=".pdf,.docx,.png,.jpg,.jpeg" name="materialFile" type="file" />
+                <input accept=".pdf,.docx,.png,.jpg,.jpeg" multiple name="materialFile" type="file" />
               </label>
-              {editingLesson?.homeworkFile ? <div className="file-chip">{fileNameFromPath(editingLesson.homeworkFile)}</div> : null}
+              {materialList(editingLesson?.homeworkFile).length ? (
+                <div className="file-list">
+                  {materialList(editingLesson?.homeworkFile).map((file) => (
+                    <a className="file-chip" href={materialHref(file)} key={file} rel="noreferrer" target="_blank">
+                      {fileNameFromPath(file)}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
               <label className="wide-field">
                 Домашнее задание
                 <textarea defaultValue={editingLesson?.homework ?? ""} name="homework" rows={4} />

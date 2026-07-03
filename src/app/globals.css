@@ -483,6 +483,12 @@ textarea {
   font-size: 13px;
 }
 
+.file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .status.done {
   background: var(--green-soft);
   color: var(--green);

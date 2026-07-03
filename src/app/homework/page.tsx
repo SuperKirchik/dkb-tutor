@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { getCurrentUserFromCookie } from "@/lib/auth";
-import { fileNameFromPath, materialHref } from "@/lib/files";
+import { fileNameFromPath, materialHref, materialList } from "@/lib/files";
 import { formatLessonDate } from "@/lib/lessonDate";
 import { prisma } from "@/lib/prisma";
 
@@ -60,10 +60,14 @@ export default async function HomeworkPage() {
                 </div>
                 <h2>{lesson.title}</h2>
                 <p>{lesson.homework}</p>
-                {lesson.homeworkFile ? (
-                  <a className="file-chip" href={materialHref(lesson.homeworkFile)} rel="noreferrer" target="_blank">
-                    {fileNameFromPath(lesson.homeworkFile)}
-                  </a>
+                {materialList(lesson.homeworkFile).length ? (
+                  <div className="file-list">
+                    {materialList(lesson.homeworkFile).map((file) => (
+                      <a className="file-chip" href={materialHref(file)} key={file} rel="noreferrer" target="_blank">
+                        {fileNameFromPath(file)}
+                      </a>
+                    ))}
+                  </div>
                 ) : null}
                 <span className={`status ${statusClass(submission?.status)}`}>
                   {submission ? submissionLabels[submission.status] : "Не отправлено"}

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { CompleteLessonForm } from "@/components/CompleteLessonForm";
 import { getCurrentUserFromCookie } from "@/lib/auth";
-import { fileNameFromPath, materialHref } from "@/lib/files";
+import { fileNameFromPath, materialHref, materialList } from "@/lib/files";
 import { lessonDateTimeLabel } from "@/lib/lessonDate";
 import { prisma } from "@/lib/prisma";
 
@@ -107,10 +107,14 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
           <p className="eyebrow">Домашнее задание</p>
           <h2>{lesson.homework ? "Задание назначено" : "Задание не назначено"}</h2>
           <p>{lesson.homework ?? "Преподаватель добавит задание после урока."}</p>
-          {lesson.homeworkFile ? (
-            <a className="file-chip" href={materialHref(lesson.homeworkFile)} rel="noreferrer" target="_blank">
-              {fileNameFromPath(lesson.homeworkFile)}
-            </a>
+          {materialList(lesson.homeworkFile).length ? (
+            <div className="file-list">
+              {materialList(lesson.homeworkFile).map((file) => (
+                <a className="file-chip" href={materialHref(file)} key={file} rel="noreferrer" target="_blank">
+                  {fileNameFromPath(file)}
+                </a>
+              ))}
+            </div>
           ) : null}
         </article>
 
