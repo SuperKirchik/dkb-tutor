@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { resolve4 } from "node:dns/promises";
 import { formatLessonDate, formatLessonTime } from "@/lib/lessonDate";
 
 type LessonResultEmail = {
@@ -36,6 +38,22 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T
   }
 }
 
+async function smtpTarget(host: string): Promise<Pick<SMTPTransport.Options, "host" | "tls">> {
+  try {
+    const [address] = await resolve4(host);
+    if (address) {
+      return {
+        host: address,
+        tls: { servername: host },
+      };
+    }
+  } catch {
+    return { host };
+  }
+
+  return { host };
+}
+
 export async function sendLessonResultEmail({
   to,
   lessonTitle,
@@ -52,8 +70,9 @@ export async function sendLessonResultEmail({
     return { sent: false, reason: "SMTP is not configured" };
   }
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
+  const target = await smtpTarget(process.env.SMTP_HOST as string);
+  const transportOptions: SMTPTransport.Options = {
+    ...target,
     port: Number(process.env.SMTP_PORT),
     secure: process.env.SMTP_SECURE === "true",
     connectionTimeout: 8000,
@@ -63,7 +82,9 @@ export async function sendLessonResultEmail({
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASSWORD,
     },
-  });
+  };
+
+  const transporter = nodemailer.createTransport(transportOptions);
 
   await withTimeout(transporter.sendMail({
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
