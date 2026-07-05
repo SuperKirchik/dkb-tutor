@@ -134,6 +134,7 @@ export function AdminTabs() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
+  const [lessonMaterialFiles, setLessonMaterialFiles] = useState<string[]>([]);
   const [selectedLessonStudentId, setSelectedLessonStudentId] = useState("");
   const [message, setMessage] = useState("Загрузка данных из PostgreSQL...");
   const [flash, setFlash] = useState<"idle" | "working" | "success" | "error">("idle");
@@ -247,7 +248,13 @@ export function AdminTabs() {
 
   function startEditingLesson(lesson: Lesson) {
     setEditingLesson(lesson);
+    setLessonMaterialFiles(materialList(lesson.homeworkFile));
     setSelectedLessonStudentId(lesson.studentId);
+  }
+
+  function stopEditingLesson() {
+    setEditingLesson(null);
+    setLessonMaterialFiles([]);
   }
 
   useEffect(() => {
@@ -320,7 +327,7 @@ export function AdminTabs() {
       videoLink: selectedLessonStudent?.lessonCallLink ?? "",
       boardLink: form.get("boardLink"),
       homework: form.get("homework"),
-      homeworkFile: editingLesson?.homeworkFile ?? "",
+      homeworkFile: lessonMaterialFiles.join("\n"),
     };
 
     try {
@@ -342,7 +349,7 @@ export function AdminTabs() {
       const { lesson } = (await response.json()) as { lesson: Lesson };
       upsertLesson(lesson);
       formElement.reset();
-      setEditingLesson(null);
+      stopEditingLesson();
       setOperationMessage(editingLesson ? "Урок обновлен" : "Урок создан", "success");
       refreshDataQuietly();
     } catch {
@@ -553,12 +560,17 @@ export function AdminTabs() {
                 Материалы урока
                 <input accept=".pdf,.docx,.png,.jpg,.jpeg" multiple name="materialFile" type="file" />
               </label>
-              {materialList(editingLesson?.homeworkFile).length ? (
+              {lessonMaterialFiles.length ? (
                 <div className="file-list">
-                  {materialList(editingLesson?.homeworkFile).map((file) => (
-                    <a className="file-chip" href={materialHref(file)} key={file} rel="noreferrer" target="_blank">
-                      {fileNameFromPath(file)}
-                    </a>
+                  {lessonMaterialFiles.map((file) => (
+                    <span className="file-chip file-chip-editable" key={file}>
+                      <a href={materialHref(file)} rel="noreferrer" target="_blank">
+                        {fileNameFromPath(file)}
+                      </a>
+                      <button onClick={() => setLessonMaterialFiles((current) => current.filter((item) => item !== file))} type="button">
+                        Удалить
+                      </button>
+                    </span>
                   ))}
                 </div>
               ) : null}
@@ -571,7 +583,7 @@ export function AdminTabs() {
                   {editingLesson ? "Сохранить изменения" : "Сохранить урок"}
                 </button>
                 {editingLesson ? (
-                  <button className="button ghost" onClick={() => setEditingLesson(null)} type="button">
+                  <button className="button ghost" onClick={stopEditingLesson} type="button">
                     Отмена
                   </button>
                 ) : null}

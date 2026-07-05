@@ -22,7 +22,11 @@ export default async function DashboardPage() {
   if (!user) redirect("/login");
 
   const nextLesson = await prisma.lesson.findFirst({
-    where: auth.role === "STUDENT" ? { studentId: auth.sub } : undefined,
+    where: {
+      ...(auth.role === "STUDENT" ? { studentId: auth.sub } : {}),
+      date: { gte: new Date() },
+      isCompleted: false,
+    },
     include: { payment: true },
     orderBy: { date: "asc" },
   });
