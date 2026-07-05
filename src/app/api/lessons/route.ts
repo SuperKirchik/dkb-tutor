@@ -10,7 +10,7 @@ export async function GET() {
       student: { select: { id: true, name: true, email: true } },
       payment: true,
     },
-    orderBy: { date: "asc" },
+    orderBy: { date: "desc" },
   });
 
   return NextResponse.json({ lessons });

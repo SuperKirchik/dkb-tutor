@@ -24,7 +24,7 @@ export default async function SchedulePage() {
       student: { select: { name: true } },
       payment: true,
     },
-    orderBy: { date: "asc" },
+    orderBy: { date: "desc" },
   });
 
   return (

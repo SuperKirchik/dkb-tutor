@@ -235,7 +235,7 @@ export function AdminTabs() {
     setLessons((current) => {
       const exists = current.some((item) => item.id === lesson.id);
       if (!exists) {
-        return [...current, lesson].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        return [...current, lesson].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       }
       return current.map((item) => (item.id === lesson.id ? lesson : item));
     });
