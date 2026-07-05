@@ -75,9 +75,9 @@ export async function sendLessonResultEmail({
     ...target,
     port: Number(process.env.SMTP_PORT),
     secure: process.env.SMTP_SECURE === "true",
-    connectionTimeout: 8000,
-    greetingTimeout: 8000,
-    socketTimeout: 8000,
+    connectionTimeout: 25000,
+    greetingTimeout: 25000,
+    socketTimeout: 25000,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASSWORD,
@@ -136,7 +136,7 @@ export async function sendLessonResultEmail({
         }
       </div>
     `,
-  }), 9000);
+  }), 30000);
 
   return { sent: true };
 }
