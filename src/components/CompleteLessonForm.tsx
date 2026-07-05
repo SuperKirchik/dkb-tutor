@@ -46,8 +46,12 @@ export function CompleteLessonForm({
         return;
       }
 
-      const data = (await response.json()) as { email?: { sent: boolean } };
-      setMessage(data.email?.sent ? "Урок завершен, письмо ученику отправлено" : "Урок завершен, но почта не настроена");
+      const data = (await response.json()) as { email?: { sent: boolean; reason?: string } };
+      setMessage(
+        data.email?.sent
+          ? "Урок завершен, письмо ученику отправлено"
+          : `Урок завершен, но письмо не отправлено: ${data.email?.reason ?? "почта не настроена"}`,
+      );
       setIsOpen(false);
       router.refresh();
       window.setTimeout(() => router.push(`/lesson/${lessonId}`), 350);

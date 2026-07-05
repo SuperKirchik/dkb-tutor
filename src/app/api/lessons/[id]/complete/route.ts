@@ -15,6 +15,11 @@ function scoreValue(value: unknown) {
   return score;
 }
 
+function errorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  return "Unknown email delivery error";
+}
+
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await isAdminRequest())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -101,8 +106,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         status: item.payment ? paymentLabels[item.payment.status] : "Не отмечена",
       })),
     });
-  } catch {
-    email = { sent: false, reason: "Email delivery failed" };
+  } catch (error) {
+    const reason = errorMessage(error);
+    console.error("Email delivery failed", {
+      lessonId: lesson.id,
+      studentEmail: lesson.student.email,
+      reason,
+    });
+    email = { sent: false, reason };
   }
 
   return NextResponse.json({ lesson, email });
